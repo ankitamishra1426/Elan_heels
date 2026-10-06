@@ -1,4 +1,5 @@
 import { useState } from "react";
+import {Link} from "react-router-dom";
 import {
   ArrowRight,
   Building2,
@@ -29,7 +30,7 @@ export default function OrderSummary({
   };
 
   return (
-    <aside className="rounded-2xl bg-white p-7 md:p-8">
+    <section className="rounded-2xl bg-white p-7 md:p-8">
 
       {/* =====================================
           TITLE
@@ -174,33 +175,11 @@ export default function OrderSummary({
           CHECKOUT
       ===================================== */}
 
-      <button
-        disabled={itemCount === 0}
-        className="
-          mt-9
-          flex
-          w-full
-          items-center
-          justify-center
-          gap-3
-          rounded-full
-          bg-[#C9A760]
-          px-5
-          py-5
-          text-xs
-          font-medium
-          uppercase
-          tracking-[0.15em]
-          text-white
-          transition
-          hover:bg-[#B8934D]
-          disabled:cursor-not-allowed
-          disabled:opacity-50
-        "
-      >
-        Proceed to Checkout
-        <ArrowRight size={15} />
-      </button>
+  <Link
+  to="/checkout"
+  className="mt-9 flex w-full items-center justify-center gap-3 rounded-full bg-[#C9A760] px-5 py-5 text-xs font-medium uppercase tracking-[0.15em] text-white transition hover:bg-[#B8934D] disabled:cursor-not-allowed disabled:opacity-50">
+  Proceed to Checkout
+</Link>
 
 
       {/* =====================================
@@ -234,6 +213,6 @@ export default function OrderSummary({
 
       </div>
 
-    </aside>
+    </section>
   );
 }

@@ -55,18 +55,24 @@ import heel8Top from "@/assets/images/products/product8/heel8-top.png";
     name: "Élan Signature Stiletto",
     category: "Stilettos",
     price: 9999,
-
+     images: [
+      heel1Front,
+      heel1Back,
+      heel1Detail,
+      heel1Side,
+      heel1Top,
+    ],
     
     colors: [
     {
       name: "Black",
-      image: heel1Back,
+      images: [heel1Black,],
       value: "#171717",
     },
     {
       name: "Nude",
       value: "#D8B89C",
-      image: heel1Nude,
+      images: [heel1Nude,],
     },
     {
       name: "Gold",

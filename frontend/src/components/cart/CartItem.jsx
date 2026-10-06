@@ -66,7 +66,7 @@ export default function CartItem({
               </Link>
 
               <p className="mt-2 text-[11px] uppercase tracking-[0.1em] text-neutral-500">
-                MIDNIGHT BLACK / {item.size} EU
+                 {item.color} / {item.size} EU
               </p>
 
               <p className="mt-3 text-sm italic text-neutral-500">

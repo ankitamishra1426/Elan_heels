@@ -1,5 +1,8 @@
 import Cart from "../models/Cart.js";
-//display item in cart
+
+// ==========================================
+// GET CART
+// ==========================================
 export const getCart = async (req, res) => {
   try {
     let cart = await Cart.findOne({
@@ -26,7 +29,10 @@ export const getCart = async (req, res) => {
     });
   }
 };
-//add item to the cart
+
+// ==========================================
+// ADD ITEM TO CART
+// ==========================================
 export const addToCart = async (req, res) => {
   try {
     const {
@@ -35,15 +41,18 @@ export const addToCart = async (req, res) => {
       image,
       price,
       size,
+      color,
       quantity = 1,
     } = req.body;
 
+    // Validate product information
     if (
       !productId ||
       !name ||
       !image ||
       price === undefined ||
-      !size
+      !size ||
+      !color
     ) {
       return res.status(400).json({
         success: false,
@@ -51,10 +60,12 @@ export const addToCart = async (req, res) => {
       });
     }
 
+    // Find user's cart
     let cart = await Cart.findOne({
       user: req.user._id,
     });
 
+    // Create cart if it doesn't exist
     if (!cart) {
       cart = await Cart.create({
         user: req.user._id,
@@ -62,28 +73,40 @@ export const addToCart = async (req, res) => {
       });
     }
 
-    // Check if same product + same size already exists
+    // ==========================================
+    // CHECK SAME PRODUCT + SAME SIZE + SAME COLOR
+    // ==========================================
     const existingItem = cart.items.find(
       (item) =>
-        item.productId === productId &&
-        item.size === size
+        item.productId === String(productId) &&
+        item.size === String(size) &&
+        item.color === String(color)
     );
 
+    // ==========================================
+    // IF SAME ITEM EXISTS → INCREASE QUANTITY
+    // ==========================================
     if (existingItem) {
-      existingItem.quantity += Number(quantity);
+      existingItem.quantity += Number(quantity) || 1;
     } else {
+      // ==========================================
+      // OTHERWISE → CREATE NEW CART ITEM
+      // ==========================================
       cart.items.push({
-        productId,
+        productId: String(productId),
         name,
         image,
-        price,
-        size,
-        quantity,
+        price: Number(price),
+        size: String(size),
+        color: String(color),
+        quantity: Number(quantity) || 1,
       });
     }
 
+    // Save cart
     await cart.save();
 
+    // Return updated cart
     res.status(200).json({
       success: true,
       message: "Product added to cart.",
@@ -98,7 +121,10 @@ export const addToCart = async (req, res) => {
     });
   }
 };
-//update items in the cart
+
+// ==========================================
+// UPDATE CART ITEM
+// ==========================================
 export const updateCartItem = async (req, res) => {
   try {
     const { itemId } = req.params;
@@ -149,7 +175,10 @@ export const updateCartItem = async (req, res) => {
     });
   }
 };
-//remove items from the cart
+
+// ==========================================
+// REMOVE ITEM FROM CART
+// ==========================================
 export const removeFromCart = async (req, res) => {
   try {
     const { itemId } = req.params;
@@ -192,7 +221,10 @@ export const removeFromCart = async (req, res) => {
     });
   }
 };
-//clear cart
+
+// ==========================================
+// CLEAR CART
+// ==========================================
 export const clearCart = async (req, res) => {
   try {
     const cart = await Cart.findOne({

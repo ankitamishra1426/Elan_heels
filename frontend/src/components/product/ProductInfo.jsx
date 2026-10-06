@@ -6,7 +6,9 @@ import { motion } from "framer-motion";
 import heels from "@/data/products";
 import { useCart } from "@/context/CartContext";
 
-export default function ProductInfo() {
+export default function ProductInfo({selectedColor,
+  setSelectedColor,
+}) {
   const { id } = useParams();
 
   const product = heels.find(
@@ -17,9 +19,7 @@ export default function ProductInfo() {
 
   const [selectedSize, setSelectedSize] = useState(null);
 
-  const [selectedColor, setSelectedColor] = useState(
-    product?.colors?.[0]?.name || ""
-  );
+  
 
   const [quantity, setQuantity] = useState(1);
 
@@ -78,34 +78,52 @@ export default function ProductInfo() {
     ADD TO CART
     =========================================
   */
+const handleAddToCart = async () => {
+  if (!selectedSize) {
+    alert("Please select a size.");
+    return;
+  }
 
-  const handleAddToCart = async () => {
-    if (!selectedSize) {
-      alert("Please select a size.");
-      return;
-    }
+  if (!selectedColor) {
+    alert("Please select a color.");
+    return;
+  }
 
-    const cartProduct = {
-      productId: String(product.id),
-      name: product.name,
-      image:
-        product.images?.[0] ||
-        product.image ||
-        "",
-      price: product.price,
-      size: String(selectedSize),
-      quantity,
-    };
+  // Find selected color
+  const selectedColorData = product.colors?.find(
+    (color) => color.name === selectedColor
+  );
 
-    console.log("ADDING PRODUCT TO CART:", cartProduct);
+  // Use selected color's first image
+  const selectedColorImage =
+    selectedColorData?.images?.[0] ||
+    product.images?.[0] ||
+    "";
 
-    const success = await addItem(cartProduct);
+  const cartProduct = {
+    productId: String(product.id),
 
-    if (success) {
-      console.log("PRODUCT ADDED SUCCESSFULLY");
-    }
+    name: product.name,
+
+    image: selectedColorImage,
+
+    price: product.price,
+
+    size: String(selectedSize),
+
+    color: selectedColor,
+
+    quantity,
   };
 
+  console.log("ADDING PRODUCT TO CART:", cartProduct);
+
+  const success = await addItem(cartProduct);
+
+  if (success) {
+    console.log("PRODUCT ADDED SUCCESSFULLY");
+  }
+};
   return (
     <section className="flex flex-col justify-center">
 
@@ -191,7 +209,7 @@ export default function ProductInfo() {
 
         <div className="flex items-center gap-3">
 
-          {colors.map((color) => (
+          {product.colors?.map((color) => (
 
             <button
               key={color.name}
@@ -215,6 +233,7 @@ export default function ProductInfo() {
               style={{
                 backgroundColor: color.value,
               }}
+              title={color.name}
             />
 
           ))}

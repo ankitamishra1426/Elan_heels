@@ -71,34 +71,31 @@ export const CartProvider = ({ children }) => {
   // -----------------------------------------
 
   const addItem = async (productData) => {
-    if (!isAuthenticated) {
-      toast.error("Please login to add products to cart.");
-      return false;
-    }
+  try {
+    setLoading(true);
 
-    try {
-      setLoading(true);
+    const response = await addToCart(productData);
 
-      const data = await addToCart(productData);
+    setCart(response.cart);
 
-      setCart(data.cart);
+    toast.success("Added to cart");
 
-      toast.success("Added to cart");
+    return true;
+  } catch (error) {
+    console.error(
+      "ADD TO CART ERROR:",
+      error.response?.data || error.message
+    );
 
-      return true;
-    } catch (error) {
-      console.error("ADD TO CART ERROR:", error);
+    toast.error(
+      error.response?.data?.message || "Failed to add item to cart"
+    );
 
-      toast.error(
-        error.response?.data?.message ||
-          "Failed to add product"
-      );
-
-      return false;
-    } finally {
-      setLoading(false);
-    }
-  };
+    return false;
+  } finally {
+    setLoading(false);
+  }
+};
 
   // -----------------------------------------
   // UPDATE QUANTITY
